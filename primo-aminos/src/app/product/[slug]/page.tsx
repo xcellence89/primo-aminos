@@ -2,8 +2,12 @@ import { getProduct } from "@/lib/catalog";
 import { RUOBanner } from "@/components/RUOBanner";
 import { RUOGate } from "@/components/RUOGate";
 
-export default function ProductPage({ params }: { params: { slug: string } }) {
-  const product = getProduct(params.slug);
+type Props = { params: Promise<{ slug: string }> };
+
+export default async function ProductPage({ params }: Props) {
+  const { slug } = await params;
+
+  const product = getProduct(slug);
   if (!product) return <main>Not found</main>;
 
   const lots = [...product.lots].reverse();
@@ -13,7 +17,15 @@ export default function ProductPage({ params }: { params: { slug: string } }) {
     <main style={{ display: "grid", gap: 14 }}>
       <h1 style={{ margin: 0, color: "#0f172a" }}>{product.name}</h1>
 
-      <div style={{ display: "flex", gap: 10, flexWrap: "wrap", color: "#475569", fontSize: 14 }}>
+      <div
+        style={{
+          display: "flex",
+          gap: 10,
+          flexWrap: "wrap",
+          color: "#475569",
+          fontSize: 14,
+        }}
+      >
         <span>{product.vialLabel}</span>
         <span>•</span>
         <span>SKU: {product.sku}</span>
@@ -34,18 +46,34 @@ export default function ProductPage({ params }: { params: { slug: string } }) {
       <RUOBanner />
 
       <section style={{ display: "grid", gap: 10 }}>
-        <h2 style={{ margin: "8px 0 0", fontSize: 16, color: "#0f172a" }}>Documentation</h2>
-        <div style={{ border: "1px solid #e5e7eb", borderRadius: 14, padding: 14 }}>
-          <div style={{ fontWeight: 900, color: "#0f172a" }}>Independent Analytical Report</div>
+        <h2 style={{ margin: "8px 0 0", fontSize: 16, color: "#0f172a" }}>
+          Documentation
+        </h2>
+        <div
+          style={{
+            border: "1px solid #e5e7eb",
+            borderRadius: 14,
+            padding: 14,
+          }}
+        >
+          <div style={{ fontWeight: 900, color: "#0f172a" }}>
+            Independent Analytical Report
+          </div>
           <div style={{ marginTop: 6, fontSize: 13, color: "#475569", lineHeight: 1.6 }}>
-            Reports are linked by lot number. These documents are not certificates of analysis.
+            Reports are linked by lot number. These documents are not certificates
+            of analysis.
           </div>
 
           <div style={{ marginTop: 10, display: "grid", gap: 8 }}>
             {lots.map((l) => (
               <div
                 key={l.lot}
-                style={{ display: "flex", justifyContent: "space-between", gap: 10, flexWrap: "wrap" }}
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  gap: 10,
+                  flexWrap: "wrap",
+                }}
               >
                 <div style={{ fontSize: 13, color: "#0f172a" }}>
                   <strong>Lot:</strong> {l.lot}{" "}
